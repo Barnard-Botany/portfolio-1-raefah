@@ -89,3 +89,52 @@ t.test(hirsutus_height, altilis_height)
 ```
 
 Now that we've done our t-test, we can see that the p-value = 0.1302, which is much greater than 0.05. Thus, the t-test shows us that the difference in whole plant height between these two species (Artocarpus hirsutus and Artocarpus atilis) isn't very significant at all.
+
+Let's try this again for two other species. This time, let's use avocados!  
+
+The following snippet of code creates a dataframe by the name of Persea_americana, which has information about the whole plant height of the species Persea americana.   
+
+```{r}
+Persea_americana <- BIEN_trait_traitbyspecies(trait = "whole plant height", species = "Persea americana")
+str(Persea_americana)
+Persea_americana
+```
+
+The following snippet of code creates a data frame by the name of Persea_borbonia, which has information about the whole plant height of the species Persea borbonia.
+
+```{r}
+Persea_borbonia <- BIEN_trait_traitbyspecies(trait = "whole plant height", species = "Persea borbonia")
+str(Persea_borbonia)
+Persea_borbonia
+```
+
+Now, I'm going to compute the mean whole plant height of both species.
+
+```{r}
+americana = Persea_americana[c(3)] # looking at column 3 of data, which is WPH
+americana = as.data.frame(americana)
+americana_height = as.numeric(americana$trait_value)
+mean(americana_height, data=americana)
+
+borbonia = Persea_borbonia[c(3)] # looking at column 3 of data, which is WPH
+borbonia = as.data.frame(borbonia)
+borbonia_height = as.numeric(borbonia$trait_value)
+mean(borbonia_height, data=borbonia)
+```
+
+The mean whole plant height of Persea americana is approximately 11.6 m. The mean whole plant height of Persea borbonia is approximatiely 8.2 m. This seems like a pretty signifianct difference in whole plant height, but we can examine this difference further using a box-plot.
+
+```{r}
+# making boxplots
+boxplot(americana_height)
+boxplot(borbonia_height)
+```
+
+Let's make a t-test to further analyze the average whole plant height of the two species.
+
+```{r}
+# computing t-test
+t.test(americana_height, borbonia_height)
+```
+
+Now that we've done our t-test, we can see that the p-value is very, very small, which means that the difference in whole plant height between Persea americana and Persea borbonia is very significant.
