@@ -1,0 +1,91 @@
+---
+title: "Plants & Profits: Portfolio 1, Part 1.4"
+output: html_notebook
+---
+
+Portfolio 1: Part 1.4
+By Raefah Wahid
+
+Part 1: Maps
+
+```{r}
+library("BIEN")
+library(ape) #Package for working with phylogenies in R
+library(maps) #Useful for making quick maps of occurrences
+library(sp) # A package for spatial data
+library(dplyr)
+library(lattice)
+```
+
+The species for my book, The Signature of All Things, is Dicranum scoparium. Here is the map of range and occurrence for that species of moss:
+
+```{r}
+moss_range <- BIEN_ranges_load_species("Dicranum scoparium")
+moss_occurrence <- BIEN_occurrence_species(species = "Dicranum scoparium")
+map('world', fill=T, col="grey", bg="light blue", xlim=c(-180,-20), ylim=c(-60, 80))
+plot(moss_range, col="green", add=T)
+points(cbind(moss_occurrence$longitude, moss_occurrence$latitude), col="blue", pch=20, cex=1)
+```
+
+For the second species, I decided to go with the Cinchona calisaya, which is also featured in Elizabeth Gilbert's The Signature of All Things and is the focus of my essay.
+
+```{r}
+cinchona_range <- BIEN_ranges_load_species("Cinchona calisaya")
+cinchona_occurrence <- BIEN_occurrence_species(species = "Cinchona calisaya")
+map('world', fill=T, col="grey", bg="light blue", xlim=c(-180,-20), ylim=c(-60, 80))
+plot(cinchona_range, col="green", add=T)
+points(cbind(cinchona_occurrence$longitude, cinchona_occurrence$latitude), col="blue", pch=20, cex=1)
+```
+
+The two plants are in totally different areas! That's so cool, and makes sense, since the cinchona requires a hot climate (like in South America) while moss is prevalent in North America.
+
+Part 2: Trait Data
+
+From the exercises, I chose to do the following question: Do you think the difference in whole plant height is statistically significant between Artocarpus hirsutus and Artocarpus integer? But there was no whole plant height data for Artocarpus integer (at least, it wasn't coming up for me), so I just compared Artocarpus hirsutus with Artocarpus altilis.
+
+The following snippet of code creates a dataframe by the name of Artocarpus_hirsutus, which has information about the whole plant height of the species Artocarpus hirsutus.   
+
+```{r}
+Artocarpus_hirsutus <- BIEN_trait_traitbyspecies(trait = "whole plant height", species = "Artocarpus hirsutus")
+str(Artocarpus_hirsutus)
+Artocarpus_hirsutus
+```
+
+The following snippet of code creates a data frame by the name of Artocarpus_altilis, which has information about the whole plant height of the species Artocarpus altilis.
+
+```{r}
+Artocarpus_altilis <- BIEN_trait_traitbyspecies(trait = "whole plant height", species = "Artocarpus altilis")
+str(Artocarpus_altilis)
+Artocarpus_altilis
+```
+
+Now, I'm going to compute the mean whole plant height of both species.
+
+```{r}
+hirsutus = Artocarpus_hirsutus[c(3)] # looking at column 3 of data, which is WPH
+hirsutus = as.data.frame(hirsutus)
+hirsutus_height = as.numeric(hirsutus$trait_value)
+mean(hirsutus_height, data=hirsutus)
+
+altilis = Artocarpus_altilis[c(3)] # looking at column 3 of data, which is WPH
+altilis = as.data.frame(altilis)
+altilis_height = as.numeric(altilis$trait_value)
+mean(altilis_height, data=altilis)
+```
+
+The mean whole plant height of Artocarpus hirsutus is approximately 9.6 m. The mean whole plant height of Artocarpus altilis is approximatiely 11.5 m. This doesn't seem like a very signifianct difference in whole plant height, but we can examine this difference further using a box-plot.
+
+```{r}
+# making boxplots
+boxplot(hirsutus_height)
+boxplot(altilis_height)
+```
+
+Let's make a t-test to further analyze the average whole plant height of the two species.
+
+```{r}
+# computing t-test
+t.test(hirsutus_height, altilis_height)
+```
+
+Now that we've done our t-test, we can see that the p-value = 0.1302, which is much greater than 0.05. Thus, the t-test shows us that the difference in whole plant height between these two species (Artocarpus hirsutus and Artocarpus atilis) isn't very significant at all.
